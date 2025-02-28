@@ -16,7 +16,7 @@
 
 #include "pins.h"
 
-static uint8_t oled_buffer[DISPLAY_HEIGHT * DISPLAY_WIDTH / 8];
+static uint8_t oled_buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 8];
 static _lock_t lvgl_api_lock;
 static const char *LOG_TAG = "LOG";
 
@@ -148,14 +148,14 @@ void initDisplay()
     ESP_LOGI(LOG_TAG, "Initialize LVGL");
     lv_init();
     // create a lvgl display
-    lv_display_t *display = lv_display_create(DISPLAY_HEIGHT, DISPLAY_WIDTH);
+    lv_display_t *display = lv_display_create(DISPLAY_WIDTH, DISPLAY_HEIGHT);
     // associate the i2c panel handle to the display
     lv_display_set_user_data(display, panel_handle);
     // create draw buffer
     void *buf = NULL;
     ESP_LOGI(LOG_TAG, "Allocate separate LVGL draw buffers");
     // LVGL reserves 2 x 4 bytes in the buffer, as these are assumed to be used as a palette.
-    size_t draw_buffer_sz = DISPLAY_HEIGHT * DISPLAY_WIDTH / 8 + 8;
+    size_t draw_buffer_sz = DISPLAY_WIDTH * DISPLAY_HEIGHT / 8 + 8;
     buf = heap_caps_calloc(1, draw_buffer_sz, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
     assert(buf);
 
