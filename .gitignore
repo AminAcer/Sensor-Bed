@@ -1,5 +1,4 @@
 build/
-sdk*
 .cache/
 managed_components
 components
