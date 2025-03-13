@@ -1,5 +1,5 @@
 build/
 .cache/
 managed_components
-components/third-party
+.ignore
 *.lock

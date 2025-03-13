@@ -1,12 +1,10 @@
 idf_component_register(SRCS
-                         "main.cpp"
+                         "src/display.cpp"
                        INCLUDE_DIRS
-                         "."
+                         "include"
                        REQUIRES
                          constants
                          arduino-esp32
                          esp8266-oled-ssd1306
-                         display
-                       PRIV_REQUIRES
-                         cxx
+                         driver
 )
