@@ -1,8 +1,8 @@
-[submodule "third-party/components/arduino-esp32"]
-	path = third-party/components/arduino-esp32
+[submodule "components/third-party/arduino-esp32"]
+	path = components/third-party/arduino-esp32
 	url = https://github.com/espressif/arduino-esp32.git
    ignore = all
-[submodule "third-party/components/esp8266-oled-ssd1306"]
-	path = third-party/components/esp8266-oled-ssd1306
-   url = https://github.com/ThingPulse/esp8266-oled-ssd1306.git
+[submodule "components/third-party/esp8266-oled-ssd1306"]
+	path = components/third-party/esp8266-oled-ssd1306
+	url = https://github.com/ThingPulse/esp8266-oled-ssd1306.git
    ignore = all
