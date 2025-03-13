@@ -1,10 +1,7 @@
 #include "display.h"
 
-#include <stdio.h>
-
 #include "constants/heltec_pins.h"
 #include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
 void turnOffOLED() {
