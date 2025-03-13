@@ -1,3 +1,10 @@
-idf_component_register(SRCS "src/display.cpp"
-                       INCLUDE_DIRS "include"
-                       REQUIRES driver)
+idf_component_register(SRCS
+                         "src/display.cpp"
+                       INCLUDE_DIRS
+                         "include"
+                       REQUIRES
+                         heltec-constants
+                         arduino-esp32
+                         esp8266-oled-ssd1306
+                         driver
+)

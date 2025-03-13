@@ -1,4 +1,12 @@
-idf_component_register(SRCS "main.cpp"
-                    INCLUDE_DIRS "."
-                    REQUIRES arduino-esp32 esp8266-oled-ssd1306 display
-                    PRIV_REQUIRES cxx)
+idf_component_register(SRCS
+                         "main.cpp"
+                       INCLUDE_DIRS
+                         "."
+                       REQUIRES
+                         arduino-esp32
+                         esp8266-oled-ssd1306
+                         display
+                         heltec-constants
+                       PRIV_REQUIRES
+                         cxx
+)
