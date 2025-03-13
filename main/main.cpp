@@ -8,6 +8,7 @@
 #include "soc/gpio_num.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "display.h"
 
 SSD1306Wire display(0x3C, VATS_SDA_OLED, VATS_SCL_OLED);  // Adjust based on your wiring
 
@@ -36,7 +37,7 @@ void initOLED()
 extern "C" void app_main() {
     initArduino();
     initOLED();
-
+    my_component_function();
     display.init();
     display.setFont(ArialMT_Plain_16);
     display.drawString(0, 0, "gay ahh clint");
