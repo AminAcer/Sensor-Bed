@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
+
 #include "display.h"
 
 extern "C" void app_main() {
