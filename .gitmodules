@@ -1,8 +1,8 @@
 [submodule "components/third-party/arduino-esp32"]
 	path = components/third-party/arduino-esp32
 	url = https://github.com/espressif/arduino-esp32.git
-   ignore = all
+   	ignore = all
 [submodule "components/third-party/esp8266-oled-ssd1306"]
 	path = components/third-party/esp8266-oled-ssd1306
 	url = https://github.com/ThingPulse/esp8266-oled-ssd1306.git
-   ignore = all
+   	ignore = all
