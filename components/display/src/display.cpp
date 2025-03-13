@@ -5,21 +5,19 @@
 #include "display.h"
 #include "constants/heltec_pins.h"
 
-void turnOffOLED()
-{
+void turnOffOLED() {
     gpio_set_direction(GPIO_NUM_36, GPIO_MODE_OUTPUT);
     gpio_set_level(GPIO_NUM_36, 1);
 }
 
-SSD1306Wire initDisplay()
-{
+SSD1306Wire initDisplay() {
     // Turning OLED on (without this, the OLED is very dim)
     gpio_set_direction(HELTEC_VEXT, GPIO_MODE_OUTPUT);
     gpio_set_level(HELTEC_VEXT, 0);
 
     // Resetting the OLED
     gpio_set_direction(HELTEC_RST_OLED, GPIO_MODE_OUTPUT);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     gpio_set_level(HELTEC_RST_OLED, 1);
 
     // Making the display object and returning it
