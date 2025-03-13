@@ -1,8 +1,8 @@
-BasedOnStyle: LLVM
+BasedOnStyle: Google
 IndentWidth: 4
 ColumnLimit: 100
 BreakBeforeBraces: Attach
-AllowShortFunctionsOnASingleLine: None
-SortIncludes: false
-PointerAlignment: Right
-SpaceAfterCStyleCast: true
+PointerAlignment: Left
+SpaceBeforeParens: ControlStatements
+AllowShortFunctionsOnASingleLine: Inline
+SortIncludes: true

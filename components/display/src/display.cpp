@@ -1,9 +1,11 @@
+#include "display.h"
+
 #include <stdio.h>
+
+#include "constants/heltec_pins.h"
+#include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/gpio.h"
-#include "display.h"
-#include "constants/heltec_pins.h"
 
 void turnOffOLED() {
     gpio_set_direction(GPIO_NUM_36, GPIO_MODE_OUTPUT);
