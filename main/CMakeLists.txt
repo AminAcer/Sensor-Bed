@@ -3,10 +3,10 @@ idf_component_register(SRCS
                        INCLUDE_DIRS
                          "."
                        REQUIRES
+                         constants
                          arduino-esp32
                          esp8266-oled-ssd1306
                          display
-                         heltec-constants
                        PRIV_REQUIRES
                          cxx
 )

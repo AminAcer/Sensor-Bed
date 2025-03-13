@@ -3,7 +3,7 @@ idf_component_register(SRCS
                        INCLUDE_DIRS
                          "include"
                        REQUIRES
-                         heltec-constants
+                         constants
                          arduino-esp32
                          esp8266-oled-ssd1306
                          driver
