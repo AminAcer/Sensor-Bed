@@ -1,4 +1,5 @@
 build/
 .cache/
 managed_components
+.ignore
 *.lock

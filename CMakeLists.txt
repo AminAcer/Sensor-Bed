@@ -5,5 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(EXTRA_COMPONENT_DIR components/esp8266-oled-ssd1306) #components/arduino-esp32)
+set(EXTRA_COMPONENT_DIRS
+  components/third-party
+)
 project(esp_sandbox)
