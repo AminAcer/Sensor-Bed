@@ -1,0 +1,10 @@
+idf_component_register(SRCS
+                         "src/wifi.cpp"
+                       INCLUDE_DIRS
+                         "include"
+                       REQUIRES
+                         constants
+                         arduino-esp32
+                         esp8266-oled-ssd1306
+                         driver
+)
