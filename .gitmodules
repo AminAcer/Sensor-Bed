@@ -6,3 +6,7 @@
 	path = components/third-party/esp8266-oled-ssd1306
 	url = https://github.com/ThingPulse/esp8266-oled-ssd1306.git
    	ignore = all
+[submodule "components/third-party/opendis"]
+	path = components/third-party/opendis
+	url = https://github.com/open-dis/open-dis-cpp.git
+   	ignore = all
