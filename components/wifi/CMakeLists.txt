@@ -4,7 +4,10 @@ idf_component_register(SRCS
                          "include"
                        REQUIRES
                          constants
-                         arduino-esp32
-                         esp8266-oled-ssd1306
+                         esp_wifi
                          driver
+                         lwip
+                         nvs_flash
+                         esp_event
+                         esp_netif
 )
