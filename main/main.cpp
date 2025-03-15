@@ -3,6 +3,7 @@
 
 #include "display.h"
 #include "wifi.h"
+#include "sockets.h"
 
 extern "C" void app_main() {
     initArduino();
@@ -12,4 +13,5 @@ extern "C" void app_main() {
     display.drawString(0, 0, "testing");
     display.display();
     init_wifi();
+    create_udp_server();
 }
