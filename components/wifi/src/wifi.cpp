@@ -79,11 +79,9 @@ esp_err_t connect_wifi() {
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_cfg));
     ESP_ERROR_CHECK(esp_wifi_start());
-    ESP_LOGI(TAG, "STA init complete!");
 
     EventBits_t bits = xEventGroupWaitBits(wifi_event_group, WIFI_SUCCESS | WIFI_FAILURE, pdFALSE,
                                            pdFALSE, portMAX_DELAY);
-    ESP_LOGI(TAG, "Post hang");
 
     if (bits == WIFI_SUCCESS) {
         ESP_LOGI(TAG, "Connected to access point!");
