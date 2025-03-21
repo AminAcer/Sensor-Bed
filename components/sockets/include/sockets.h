@@ -15,7 +15,7 @@ typedef struct udp_socket {
 udp_socket* create_udp_socket(socket_type type, const char* ip, int port);
 
 /// @brief Sends a message using a UDP client
-int send_udp(const char* ip, int port);
+int send_udp(udp_socket* client, const char* packet);
 
-/// @brief Starts the receive thread for a socket
-void start_receive_udp(udp_socket* socket);
+/// @brief Starts the receive thread for a socket and sets the callback
+void start_receive_udp(udp_socket* socket, void (*callback)(const char*));

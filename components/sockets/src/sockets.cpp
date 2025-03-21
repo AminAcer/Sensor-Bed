@@ -2,6 +2,7 @@
 
 #include <pthread.h>
 
+#include <cstddef>
 #include <cstring>
 
 #include "constants/general.h"
@@ -24,8 +25,10 @@ udp_socket* create_udp_socket(socket_type type, const char* ip, int port) {
     memset(&udp->server_addr, 0, sizeof(sockaddr_in));
     udp->server_addr.sin_family = AF_INET;
     udp->server_addr.sin_addr.s_addr = inet_addr(ip);
-    udp->server_addr.sin_port = htons(46729);
+    udp->server_addr.sin_port = htons(port);
     udp->addr_len = sizeof(udp->server_addr);
+
+    udp->callback = NULL;  // Init Callback to NULL
 
     if (type == socket_type::SERVER) {
         if (bind(udp->sockfd, (struct sockaddr*)&udp->server_addr, sizeof(sockaddr_in)) < 0) {
@@ -65,7 +68,9 @@ static void* receive_udp_thread(void* arg) {
     return NULL;
 }
 
-void start_receive_udp(udp_socket* server) {
+void start_receive_udp(udp_socket* server, void (*callback)(const char*)) {
+    server->callback = callback;
+
     pthread_t thread_id;
     if (pthread_create(&thread_id, NULL, receive_udp_thread, (void*)server) != 0) {
         ESP_LOGE(TAG, "Failed to create a thread!");

@@ -5,6 +5,7 @@
 #include <freertos/FreeRTOS.h>
 #include <nvs_flash.h>
 
+#include "SSD1306Wire.h"
 #include "constants/general.h"
 
 // These MUST be bit masks in order for xEventGroupSetBits to work
@@ -47,7 +48,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base, int32_t eve
     }
 }
 
-esp_err_t connect_wifi() {
+esp_err_t connect_wifi(SSD1306Wire* display, const char* msg) {
     int status = FAILURE;
 
     ESP_ERROR_CHECK(esp_netif_init());
@@ -99,9 +100,10 @@ esp_err_t connect_wifi() {
     return status;
 }
 
-int init_wifi() {
+int init_wifi(SSD1306Wire* display) {
     // Init Non-Volitile storage in flash
     esp_err_t ret = nvs_flash_init();
+    display_text(display, "running nvs flash init...");
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
@@ -109,6 +111,7 @@ int init_wifi() {
     ESP_ERROR_CHECK(ret);
 
     // Establish a wifi connection
+    display_text(display, "connecting to wifi...");
     if (connect_wifi() != SUCCESS) {
         ESP_LOGE(TAG, "Failed to connect to wifi!");
         return FAILURE;

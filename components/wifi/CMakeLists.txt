@@ -5,6 +5,7 @@ idf_component_register(SRCS
                        REQUIRES
                          constants
                          esp_wifi
+                         display
                          driver
                          lwip
                          nvs_flash
