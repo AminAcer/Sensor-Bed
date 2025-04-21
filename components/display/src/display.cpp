@@ -44,4 +44,7 @@ void init_display(SSD1306Wire* display) {
 
     // Init the display
     display->init();
+
+    // Invert display
+    display->flipScreenVertically();
 }
