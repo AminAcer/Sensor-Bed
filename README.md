@@ -171,7 +171,10 @@
                            "src/dis7/SyntheticEnvironmentFamilyPdu.cpp"
                            "src/dis7/SystemIdentifier.cpp"
                            "src/dis7/TotalRecordSets.cpp"
-                         INCLUDE_DIRS "src/" "src/dis7/")
+                         INCLUDE_DIRS "src/" "src/dis7/"
+      )
+      
+      target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-reorder)
       ```
       </details>
   - Copy the following `opendis7_export.h` into `opendis/src/dis7/`

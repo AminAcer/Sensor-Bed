@@ -8,6 +8,7 @@ idf_component_register(SRCS
                          esp8266-oled-ssd1306
                          display
                          dis
+                         wifi
                        PRIV_REQUIRES
                          cxx
 )

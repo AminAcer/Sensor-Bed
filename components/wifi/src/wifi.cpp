@@ -1,4 +1,4 @@
-#include "wifi.h"
+#include "wifi/wifi.h"
 
 #include <esp_log.h>
 #include <esp_wifi.h>
@@ -7,6 +7,7 @@
 
 #include "SSD1306Wire.h"
 #include "constants/general.h"
+#include "display/display.h"
 
 // These MUST be bit masks in order for xEventGroupSetBits to work
 #define WIFI_SUCCESS 1 << 0
@@ -48,7 +49,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base, int32_t eve
     }
 }
 
-esp_err_t connect_wifi(SSD1306Wire* display, const char* msg) {
+esp_err_t connect_wifi(SSD1306Wire* display) {
     int status = FAILURE;
 
     ESP_ERROR_CHECK(esp_netif_init());
@@ -112,7 +113,7 @@ int init_wifi(SSD1306Wire* display) {
 
     // Establish a wifi connection
     display_text(display, "connecting to wifi...");
-    if (connect_wifi() != SUCCESS) {
+    if (connect_wifi(display) != SUCCESS) {
         ESP_LOGE(TAG, "Failed to connect to wifi!");
         return FAILURE;
     }

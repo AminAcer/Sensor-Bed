@@ -12,3 +12,6 @@ idf_component_register(SRCS
                          esp_event
                          esp_netif
 )
+
+# Suppress -Wmissing-field-initializers for this component
+target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-missing-field-initializers)
