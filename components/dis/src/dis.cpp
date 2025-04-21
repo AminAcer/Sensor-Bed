@@ -1,9 +1,3 @@
-#include "dis.h"
+#include "dis/dis.h"
 
-#include "esp_wifi.h"
-
-void init_udp() {}
-
-void initDis() {
-    init_udp();
-}
+void init_dis() {}

@@ -1,9 +1,10 @@
 #include "display/display.h"
 
-#include "SSD1306Wire.h"
+#include <SSD1306Wire.h>
+#include <driver/gpio.h>
+#include <freertos/task.h>
+
 #include "constants/heltec_pins.h"
-#include "driver/gpio.h"
-#include "freertos/task.h"
 
 void turn_off_oled() {
     gpio_set_direction(GPIO_NUM_36, GPIO_MODE_OUTPUT);

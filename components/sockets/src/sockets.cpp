@@ -1,13 +1,16 @@
 #include "sockets/sockets.h"
 
-#include <pthread.h>
+#include <esp_log.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/idf_additions.h>
+#include <freertos/projdefs.h>
+#include <freertos/task.h>
+#include <lwip/sockets.h>
 
 #include <cstddef>
 #include <cstring>
 
 #include "constants/general.h"
-#include "esp_log.h"
-#include "lwip/sockets.h"
 
 static const char* TAG = "SOCKETS";
 
@@ -42,12 +45,12 @@ udp_socket* create_udp_socket(socket_type type, const char* ip, int port) {
     return udp;
 }
 
-int send_udp(udp_socket* client, const char* packet) {
+bool send_udp(udp_socket* client, const char* packet) {
     return sendto(client->sockfd, packet, strlen(packet), 0, (struct sockaddr*)&client->server_addr,
-                  client->addr_len);
+                  client->addr_len) == strlen(packet);
 }
 
-static void* receive_udp_thread(void* arg) {
+void receive_udp_thread(void* arg) {
     udp_socket* server = (udp_socket*)arg;
     char buffer[BUFFER_SIZE];
     struct sockaddr_in client_addr;
@@ -64,18 +67,21 @@ static void* receive_udp_thread(void* arg) {
         } else {
             ESP_LOGE(TAG, "Received failed!");
         }
+
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
-    return NULL;
+
+    // Cleanup if loop exists
+    vTaskDelete(NULL);
 }
 
 void start_receive_udp(udp_socket* server, void (*callback)(const char*)) {
     server->callback = callback;
 
-    pthread_t thread_id;
-    if (pthread_create(&thread_id, NULL, receive_udp_thread, (void*)server) != 0) {
-        ESP_LOGE(TAG, "Failed to create a thread!");
-    }
-    pthread_detach(thread_id);
+    xTaskCreatePinnedToCore(receive_udp_thread, "Server Task",
+                            4096,           // Allocate 16KB to the stack of this task
+                            (void*)server,  // Pass the server argument in
+                            5, NULL, 1);
 }
 
 void destroy_udp_socket(udp_socket* udp) {
