@@ -2,4 +2,6 @@ build/
 .cache/
 managed_components
 .ignore
+sdkconfig
+sdkconfig.old
 *.lock
