@@ -5,7 +5,6 @@
 #include <freertos/FreeRTOS.h>
 #include <nvs_flash.h>
 
-#include "SSD1306Wire.h"
 #include "constants/general.h"
 #include "display/display.h"
 
@@ -112,11 +111,12 @@ int init_wifi(SSD1306Wire* display) {
     ESP_ERROR_CHECK(ret);
 
     // Establish a wifi connection
-    display_text(display, "connecting to wifi...");
+    display_text(display, "Connecting to WIFI...");
     if (connect_wifi(display) != SUCCESS) {
         ESP_LOGE(TAG, "Failed to connect to wifi!");
         return FAILURE;
     }
+    display_text(display, "WIFI Connected!");
 
     return SUCCESS;
 }

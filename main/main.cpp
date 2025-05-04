@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "SSD1306Wire.h"
 #include "constants/heltec_pins.h"
 #include "display/display.h"
 #include "sockets/sockets.h"
