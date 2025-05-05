@@ -7,4 +7,4 @@
 /// @param display: Interface to control the OLED
 ///
 /// @return int: Result of the function (0: Success | 1: Failure)
-int init_wifi(SSD1306Wire* display);
+int init_wifi();

@@ -48,7 +48,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base, int32_t eve
     }
 }
 
-esp_err_t connect_wifi(SSD1306Wire* display) {
+esp_err_t connect_wifi() {
     int status = FAILURE;
 
     ESP_ERROR_CHECK(esp_netif_init());
@@ -100,10 +100,10 @@ esp_err_t connect_wifi(SSD1306Wire* display) {
     return status;
 }
 
-int init_wifi(SSD1306Wire* display) {
+int init_wifi() {
     // Init Non-Volitile storage in flash
     esp_err_t ret = nvs_flash_init();
-    display_text(display, "running nvs flash init...");
+    display::display_text("Running NVS flash init...");
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
@@ -111,12 +111,12 @@ int init_wifi(SSD1306Wire* display) {
     ESP_ERROR_CHECK(ret);
 
     // Establish a wifi connection
-    display_text(display, "Connecting to WIFI...");
-    if (connect_wifi(display) != SUCCESS) {
+    display::display_text("Connecting to WIFI...");
+    if (connect_wifi() != SUCCESS) {
         ESP_LOGE(TAG, "Failed to connect to wifi!");
         return FAILURE;
     }
-    display_text(display, "WIFI Connected!");
+    display::display_text("WIFI Connected!");
 
     return SUCCESS;
 }

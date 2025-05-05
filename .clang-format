@@ -6,3 +6,4 @@ PointerAlignment: Left
 SpaceBeforeParens: ControlStatements
 AllowShortFunctionsOnASingleLine: Inline
 SortIncludes: true
+NamespaceIndentation: All

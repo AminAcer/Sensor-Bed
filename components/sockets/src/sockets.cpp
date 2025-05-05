@@ -5,88 +5,86 @@
 #include <freertos/idf_additions.h>
 #include <freertos/projdefs.h>
 #include <freertos/task.h>
-#include <lwip/sockets.h>
 
 #include <cstddef>
 #include <cstring>
+#include <memory>
 
 #include "constants/general.h"
+#include "display/display.h"
 
-static const char* TAG = "SOCKETS";
+namespace sockets::udp {
+    static const char* TAG = "SOCKETS";
 
-udp_socket* create_udp_socket(socket_type type, const char* ip, int port) {
-    udp_socket* udp = (udp_socket*)malloc(sizeof(udp_socket));
-
-    // Create a socket
-    if ((udp->sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        ESP_LOGE(TAG, "Socket creation failed!");
-        free(udp);
-        return NULL;
-    }
-
-    // Create a socket
-    memset(&udp->server_addr, 0, sizeof(sockaddr_in));
-    udp->server_addr.sin_family = AF_INET;
-    udp->server_addr.sin_addr.s_addr = inet_addr(ip);
-    udp->server_addr.sin_port = htons(port);
-    udp->addr_len = sizeof(udp->server_addr);
-
-    udp->callback = NULL;  // Init Callback to NULL
-
-    if (type == socket_type::SERVER) {
-        if (bind(udp->sockfd, (struct sockaddr*)&udp->server_addr, sizeof(sockaddr_in)) < 0) {
-            ESP_LOGE(TAG, "Server bind failed!");
-            close(udp->sockfd);
-            free(udp);
-            return NULL;
+    Socket::Socket(SocketType type, const char* ip, int port) {
+        // Create a socket
+        if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+            ESP_LOGE(TAG, "Socket creation failed!");
         }
-    }
 
-    return udp;
-}
+        // Create a socket
+        memset(&server_addr, 0, sizeof(sockaddr_in));
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_addr.s_addr = inet_addr(ip);
+        server_addr.sin_port = htons(port);
+        addr_len = sizeof(server_addr);
 
-bool send_udp(udp_socket* client, const char* packet) {
-    return sendto(client->sockfd, packet, strlen(packet), 0, (struct sockaddr*)&client->server_addr,
-                  client->addr_len) == strlen(packet);
-}
-
-void receive_udp_thread(void* arg) {
-    udp_socket* server = (udp_socket*)arg;
-    char buffer[BUFFER_SIZE];
-    struct sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
-
-    while (true) {
-        int recv_len = recvfrom(server->sockfd, buffer, BUFFER_SIZE - 1, 0,
-                                (struct sockaddr*)&client_addr, &client_len);
-        if (recv_len > 0) {
-            buffer[recv_len] = '\0';
-            if (server->callback) {
-                server->callback(buffer);
+        if (type == SocketType::SERVER) {
+            if (bind(sockfd, (struct sockaddr*)&server_addr, sizeof(sockaddr_in)) < 0) {
+                ESP_LOGE(TAG, "Server bind failed!");
+                close(sockfd);
             }
-        } else {
-            ESP_LOGE(TAG, "Received failed!");
+        }
+    }
+
+    Socket::~Socket() {
+        close(sockfd);
+    }
+
+    bool Socket::send(const char* packet) {
+        return sendto(sockfd, packet, strlen(packet), 0, (struct sockaddr*)&server_addr,
+                      addr_len) == strlen(packet);
+    }
+
+    void basic_handle(const char* msg) {
+        ESP_LOGI(TAG, "Received message: %s", msg);
+        display::display_text(msg, display::FontSize::MEDIUM, 10, 0);
+    }
+
+    void receive_thread(void* arg) {
+        Socket* socket = (Socket*)arg;
+        char buffer[BUFFER_SIZE];
+        struct sockaddr_in client_addr;
+        socklen_t client_len = sizeof(client_addr);
+
+        while (true) {
+            int recv_len = recvfrom(socket->sockfd, buffer, BUFFER_SIZE - 1, 0,
+                                    (struct sockaddr*)&client_addr, &client_len);
+            if (recv_len > 0) {
+                buffer[recv_len] = '\0';
+                if (socket->callback) {
+                    socket->callback(buffer);
+                }
+            } else {
+                ESP_LOGE(TAG, "Received failed!");
+            }
+
+            vTaskDelay(pdMS_TO_TICKS(10));
         }
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+        // Cleanup if loop exists
+        vTaskDelete(NULL);
     }
 
-    // Cleanup if loop exists
-    vTaskDelete(NULL);
-}
+    void start_receive(Socket* socket) {
+        if (socket == nullptr) {
+            return;
+        }
 
-void start_receive_udp(udp_socket* server, void (*callback)(const char*)) {
-    server->callback = callback;
-
-    xTaskCreatePinnedToCore(receive_udp_thread, "Server Task",
-                            4096,           // Allocate 16KB to the stack of this task
-                            (void*)server,  // Pass the server argument in
-                            5, NULL, 1);
-}
-
-void destroy_udp_socket(udp_socket* udp) {
-    if (udp) {
-        close(udp->sockfd);
-        free(udp);
+        xTaskCreatePinnedToCore(receive_thread, "Server Task",
+                                4096,           // Allocate 16KB to the stack of this task
+                                (void*)socket,  // Pass the socket argument in
+                                5, NULL, 1);
     }
-}
+
+}  // namespace sockets::udp
