@@ -64,6 +64,8 @@ namespace sockets::udp {
                 buffer[recv_len] = '\0';
                 if (socket->callback) {
                     socket->callback(buffer);
+                } else {
+                    ESP_LOGW(TAG, "Msg received but callback not set!");
                 }
             } else {
                 ESP_LOGE(TAG, "Received failed!");

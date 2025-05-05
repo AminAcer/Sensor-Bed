@@ -10,7 +10,9 @@
 
 extern "C" void app_main() {
     initArduino();
+    display::init_display();
     display::display_text("Display Initialized");
+
     init_wifi();
 
     auto svr = sockets::udp::Socket(sockets::udp::SocketType::SERVER, "0.0.0.0", 46729);
