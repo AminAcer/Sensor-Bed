@@ -6,7 +6,7 @@
 #include <nvs_flash.h>
 
 #include "constants/general.h"
-#include "display/display.h"
+#include "logger/logger.h"
 
 // These MUST be bit masks in order for xEventGroupSetBits to work
 #define WIFI_SUCCESS 1 << 0
@@ -26,11 +26,11 @@ namespace wifi {
     static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id,
                                    void* event_data) {
         if (event_id == WIFI_EVENT_STA_START) {
-            ESP_LOGI(TAG, "Connecting to AP...");
+            D_LOGI(TAG, "Connecting to AP...");
             esp_wifi_connect();
         } else if (event_id == WIFI_EVENT_STA_DISCONNECTED) {
             if (retry_num < MAX_FAILURES) {
-                ESP_LOGI(TAG, "Reconnecting to AP...");
+                D_LOGI(TAG, "Reconnecting to AP...");
                 esp_wifi_connect();
                 retry_num++;
             } else {
@@ -43,7 +43,7 @@ namespace wifi {
                                  void* event_data) {
         if (event_id == IP_EVENT_STA_GOT_IP) {
             ip_event_got_ip_t* event = (ip_event_got_ip_t*)event_data;
-            ESP_LOGI(TAG, "Station IP: " IPSTR, IP2STR(&event->ip_info.ip));
+            D_LOGI(TAG, "Station IP: " IPSTR, IP2STR(&event->ip_info.ip));
             retry_num = 0;
             xEventGroupSetBits(wifi_event_group, WIFI_SUCCESS);
         }
@@ -86,10 +86,10 @@ namespace wifi {
                                                pdFALSE, pdFALSE, portMAX_DELAY);
 
         if (bits == WIFI_SUCCESS) {
-            ESP_LOGI(TAG, "Connected to access point!");
+            D_LOGI(TAG, "Connected to access point!");
             status = SUCCESS;
         } else {
-            ESP_LOGE(TAG, "Failed to connect to access point!");
+            D_LOGE(TAG, "Failed to connect to access point!");
         }
 
         ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP,
@@ -114,7 +114,7 @@ namespace wifi {
         // Establish a wifi connection
         display::display_text("Connecting to WIFI...");
         if (connect_wifi() != SUCCESS) {
-            ESP_LOGE(TAG, "Failed to connect to wifi!");
+            D_LOGE(TAG, "Failed to connect to wifi!");
             return FAILURE;
         }
         display::display_text("WIFI Connected!");

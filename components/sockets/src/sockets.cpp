@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "constants/general.h"
-#include "display/display.h"
+#include "logger/logger.h"
 
 namespace sockets::udp {
     static const char* TAG = "SOCKETS";
@@ -19,7 +19,7 @@ namespace sockets::udp {
     Socket::Socket(SocketType type, const char* ip, int port) {
         // Create a socket
         if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-            ESP_LOGE(TAG, "Socket creation failed!");
+            D_LOGE(TAG, "Socket creation failed!");
         }
 
         // Create a socket
@@ -31,7 +31,7 @@ namespace sockets::udp {
 
         if (type == SocketType::SERVER) {
             if (bind(sockfd, (struct sockaddr*)&server_addr, sizeof(sockaddr_in)) < 0) {
-                ESP_LOGE(TAG, "Server bind failed!");
+                D_LOGE(TAG, "Server bind failed!");
                 close(sockfd);
             }
         }
@@ -47,8 +47,7 @@ namespace sockets::udp {
     }
 
     void basic_handle(const char* msg) {
-        ESP_LOGI(TAG, "Received message: %s", msg);
-        display::display_text(msg, display::FontSize::MEDIUM, 10, 0);
+        D_LOGI(TAG, "Received message: %s", msg);
     }
 
     void receive_thread(void* arg) {
@@ -65,10 +64,10 @@ namespace sockets::udp {
                 if (socket->callback) {
                     socket->callback(buffer);
                 } else {
-                    ESP_LOGW(TAG, "Msg received but callback not set!");
+                    D_LOGW(TAG, "Msg received but callback not set!");
                 }
             } else {
-                ESP_LOGE(TAG, "Received failed!");
+                D_LOGE(TAG, "Received failed!");
             }
 
             vTaskDelay(pdMS_TO_TICKS(10));

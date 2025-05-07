@@ -6,7 +6,7 @@ idf_component_register(SRCS
                          constants
                          arduino-esp32
                          esp8266-oled-ssd1306
-                         display
+                         logger
                          dis
                          wifi
                        PRIV_REQUIRES

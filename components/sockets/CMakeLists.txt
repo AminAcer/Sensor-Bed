@@ -4,6 +4,6 @@ idf_component_register(SRCS
                          "include"
                        REQUIRES
                          constants
-                         display
+                         logger
                          lwip
 )
