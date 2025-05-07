@@ -6,45 +6,49 @@
 
 #include "constants/heltec_pins.h"
 
-void turn_off_oled() {
-    gpio_set_direction(GPIO_NUM_36, GPIO_MODE_OUTPUT);
-    gpio_set_level(GPIO_NUM_36, 1);
-}
+namespace display {
+    // Display object for writing to the display
+    static SSD1306Wire display = SSD1306Wire(0x3C, HELTEC_SDA_OLED, HELTEC_SCL_OLED);
 
-void display_text(SSD1306Wire* display, const char* text, font_size size, uint8_t posx,
-                  uint8_t posy) {
-    switch (size) {
-        case (font_size::SMALL):
-            display->setFont(ArialMT_Plain_10);
-            break;
-        case (font_size::MEDIUM):
-            display->setFont(ArialMT_Plain_16);
-            break;
-        case (font_size::LARGE):
-            display->setFont(ArialMT_Plain_24);
-            break;
-        default:
-            display->setFont(ArialMT_Plain_16);
-            break;
-    };
-    display->clear();
-    display->drawString(posx, posy, text);
-    display->display();
-}
+    void turn_off_oled() {
+        gpio_set_direction(GPIO_NUM_36, GPIO_MODE_OUTPUT);
+        gpio_set_level(GPIO_NUM_36, 1);
+    }
 
-void init_display(SSD1306Wire* display) {
-    // Turning OLED on (without this, the OLED is very dim)
-    gpio_set_direction(HELTEC_VEXT, GPIO_MODE_OUTPUT);
-    gpio_set_level(HELTEC_VEXT, 0);
+    void display_text(const char* text, FontSize size, uint8_t posx, uint8_t posy) {
+        switch (size) {
+            case (FontSize::SMALL):
+                display.setFont(ArialMT_Plain_10);
+                break;
+            case (FontSize::MEDIUM):
+                display.setFont(ArialMT_Plain_16);
+                break;
+            case (FontSize::LARGE):
+                display.setFont(ArialMT_Plain_24);
+                break;
+            default:
+                display.setFont(ArialMT_Plain_16);
+                break;
+        };
+        display.clear();
+        display.drawString(posx, posy, text);
+        display.display();
+    }
 
-    // Resetting the OLED
-    gpio_set_direction(HELTEC_RST_OLED, GPIO_MODE_OUTPUT);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    gpio_set_level(HELTEC_RST_OLED, 1);
+    void init_display() {
+        // Turning OLED on (without this, the OLED is very dim)
+        gpio_set_direction(HELTEC_VEXT, GPIO_MODE_OUTPUT);
+        gpio_set_level(HELTEC_VEXT, 0);
 
-    // Init the display
-    display->init();
+        // Resetting the OLED
+        gpio_set_direction(HELTEC_RST_OLED, GPIO_MODE_OUTPUT);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+        gpio_set_level(HELTEC_RST_OLED, 1);
 
-    // Invert display
-    display->flipScreenVertically();
-}
+        // Init the display
+        display.init();
+
+        // Invert display
+        display.flipScreenVertically();
+    }
+}  // namespace display
