@@ -1,4 +1,5 @@
-# Sandbox
+# ESP Entity Generator
+ESP Entity Generator's goal is to generate a random initial coordinate and follow a randomized path from that starting coordinate. It will pack/publish its coordinates via OpenDIS at 20hz. This software is intended to be flashed onto a [Heltec V3 LoRa board](https://heltec.org/project/wifi-lora-32-v3/) in order to send the coordinates to a ground station via WiFi or the LoRa antenna if possible.
 
 ## Third-Party submodules changes
 ### ESP8266-OLED-SSD1306
