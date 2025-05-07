@@ -1,22 +1,22 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <memory>
-
-#include "constants/heltec_pins.h"
-#include "display/display.h"
+#include "logger/logger.h"
 #include "sockets/sockets.h"
 #include "wifi/wifi.h"
+
+static const char* TAG = "MAIN";
 
 extern "C" void app_main() {
     initArduino();
     display::init_display();
-    display::display_text("Display Initialized");
+    D_LOGI(TAG, "Display Initialized");
 
     wifi::init_wifi();
 
-    auto svr = sockets::udp::Socket(sockets::udp::SocketType::SERVER, "0.0.0.0", 46729);
-    auto client = sockets::udp::Socket(sockets::udp::SocketType::CLIENT, "192.168.0.183", 36729);
+    static auto svr = sockets::udp::Socket(sockets::udp::SocketType::SERVER, "0.0.0.0", 46729);
+    static auto client =
+        sockets::udp::Socket(sockets::udp::SocketType::CLIENT, "192.168.0.183", 36729);
 
     svr.callback = sockets::udp::basic_handle;
     sockets::udp::start_receive(&svr);
