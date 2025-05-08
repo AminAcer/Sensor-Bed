@@ -10,4 +10,10 @@ menu "Wi-Fi Configuration"
         default "pass"
         help
             Enter the password of your Wi-Fi network.
+    
+    config WIFI_CONNECT_ATTEMPTS
+        int "Wi-Fi Connect Attempts"
+        default 10
+        help
+            Enter the max amount of connect attemts to connect to Wi-Fi.
 endmenu

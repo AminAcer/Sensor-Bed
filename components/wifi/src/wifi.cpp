@@ -16,7 +16,7 @@
 #define WIFI_SSID CONFIG_WIFI_SSID
 #define WIFI_PASS CONFIG_WIFI_PASSWORD
 
-#define MAX_FAILURES 10
+#define MAX_FAILURES CONFIG_WIFI_CONNECT_ATTEMPTS
 
 namespace wifi {
     const static char* TAG = "WIFI";
@@ -30,9 +30,9 @@ namespace wifi {
             esp_wifi_connect();
         } else if (event_id == WIFI_EVENT_STA_DISCONNECTED) {
             if (retry_num < MAX_FAILURES) {
-                D_LOGI(TAG, "Reconnecting to AP...");
-                esp_wifi_connect();
                 retry_num++;
+                D_LOGI(TAG, "Reconnecting to AP...\n|-- attempt: %d/%d", retry_num, MAX_FAILURES);
+                esp_wifi_connect();
             } else {
                 xEventGroupSetBits(wifi_event_group, WIFI_FAILURE);
             }
