@@ -35,6 +35,12 @@ namespace display {
         display.display();
     }
 
+    void display_cords(const char* entityId, const DIS::Vector3Double& pos) {
+        display.clear();
+        display.drawString(posx, posy, text);
+        display.display();
+    }
+
     void init_display() {
         // Turning OLED on (without this, the OLED is very dim)
         gpio_set_direction(HELTEC_VEXT, GPIO_MODE_OUTPUT);
