@@ -4,6 +4,4 @@ idf_component_register(SRCS
                          "include"
                        REQUIRES
                          opendis
-                         sockets
-                         wifi
 )
