@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <dis7/EntityStatePdu.h>
 
 #include "dis/dis.h"
 #include "logger/logger.h"
@@ -25,6 +24,7 @@ extern "C" void app_main() {
     client.send("Client test msg");
 
     // Make an Entity
+
     DIS::EntityStatePdu ownship = create_entity(0.1, 0.3, 10.4);
-    D_LOG_CORD("ownship", ownship.getEntityLocation());
+    D_LOG_CORD(TAG, "ground", ownship.getEntityLocation());
 }

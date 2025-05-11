@@ -59,11 +59,11 @@
 /// @param tag: TAG for the ESP log macro
 /// @param msg: Item to log
 /// @param ...: Variadic args if needed for logging
-#define D_LOG_CORD(entityId, cord)                                                              \
+#define D_LOG_CORD(tag, entityId, cord)                                                         \
     do {                                                                                        \
         char msg_buf[256];                                                                      \
         snprintf(msg_buf, sizeof(msg_buf), "%s cords:\n|- x: %f\n|- y: %f\n|- z: %f", entityId, \
                  cord.getX(), cord.getY(), cord.getZ());                                        \
-        ESP_LOGI("Cord", msg_buf);                                                              \
+        ESP_LOGI(tag, "%s", msg_buf);                                                           \
         display::display_text(msg_buf);                                                         \
     } while (0)
