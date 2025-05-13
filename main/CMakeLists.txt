@@ -10,7 +10,7 @@ idf_component_register(SRCS
                          sockets
                          dis
                          wifi
-                         i2c
+                         sensors
                        PRIV_REQUIRES
                          cxx
 )

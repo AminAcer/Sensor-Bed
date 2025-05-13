@@ -2,13 +2,10 @@
 
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
-#include <freertos/idf_additions.h>
-#include <freertos/projdefs.h>
 #include <freertos/task.h>
 
 #include <cstddef>
 #include <cstring>
-#include <memory>
 
 #include "constants/general.h"
 #include "logger/logger.h"
@@ -50,7 +47,7 @@ namespace sockets::udp {
         D_LOGI(TAG, "Received message: %s", msg);
     }
 
-    void receive_thread(void* arg) {
+    static void receive_thread(void* arg) {
         Socket* socket = (Socket*)arg;
         char buffer[BUFFER_SIZE];
         struct sockaddr_in client_addr;
