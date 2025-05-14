@@ -6,6 +6,7 @@
 
 #include "dis/dis.h"
 #include "logger/logger.h"
+#include "sensors/bme280.h"
 #include "sensors/bno055.h"
 #include "sockets/sockets.h"
 #include "wifi/wifi.h"
@@ -37,6 +38,13 @@ extern "C" void app_main() {
                                                          .dev_addr = 0x28,
                                                          .scl_speed_hz = (uint16_t)100000});
 
+    static auto bme280 = sensors::BME280(i2c::I2C_Config{.name = "BME280",
+                                                         .sda = GPIO_NUM_7,
+                                                         .scl = GPIO_NUM_6,
+                                                         .dev_addr = 0x76,
+                                                         .scl_speed_hz = (uint16_t)100000});
+
     // Start getting data from the sensor
     i2c::start_sensor(&bno055);
+    i2c::start_sensor(&bme280);
 }

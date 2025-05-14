@@ -1,5 +1,6 @@
 idf_component_register(SRCS
                          "src/bno055.cpp"
+                         "src/bme280.cpp"
                        INCLUDE_DIRS
                          "include"
                        REQUIRES

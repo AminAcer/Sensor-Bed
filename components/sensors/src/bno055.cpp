@@ -8,8 +8,6 @@
 
 #include <mutex>
 
-#include "i2c/I2C_Interface.h"
-
 /// @brief Control registers
 #define BNO055_CHIP_ID_ADDR 0x00
 #define BNO055_OPR_MODE_ADDR 0x3D

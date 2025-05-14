@@ -53,7 +53,7 @@ namespace i2c {
         /// @param data: Packet to send to the register
         ///
         /// @return int: Result of the function (ESP_OK: Success | OTHERS: Failure)
-        esp_err_t write(uint8_t reg, uint8_t data);
+        virtual esp_err_t write(uint8_t reg, uint8_t data);
 
         /// @brief Read function that reads data from a sensors registers
         ///
@@ -62,7 +62,7 @@ namespace i2c {
         /// @param len: Size of the packet
         ///
         /// @return int: Result of the function (ESP_OK: Success | OTHERS: Failure)
-        esp_err_t read(uint8_t reg, uint8_t* data, size_t len);
+        virtual esp_err_t read(uint8_t reg, uint8_t* data, size_t len);
 
         /// @brief Bus Handle
         i2c_master_bus_handle_t bus_handle;

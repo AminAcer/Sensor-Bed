@@ -37,17 +37,13 @@ namespace i2c {
 
     esp_err_t I2C_Interface::write(uint8_t reg, uint8_t data) {
         uint8_t buffer[2] = {reg, data};
-        return i2c_master_transmit(dev_handle, buffer, sizeof(buffer), 1000);  // 1 second timeout
+        return i2c_master_transmit(dev_handle, buffer, sizeof(buffer),
+                                   -1);  // Wait forever on this call
     }
 
     esp_err_t I2C_Interface::read(uint8_t reg, uint8_t* data, size_t len) {
-        // First send the register address to read from
-        if (esp_err_t res = i2c_master_transmit(dev_handle, &reg, len, 1000); res != ESP_OK) {
-            return res;
-        }
-
-        // Then receive the requested number of bytes
-        return i2c_master_receive(dev_handle, data, len, 1000);
+        return i2c_master_transmit_receive(dev_handle, &reg, 1, data, len,
+                                           -1);  // Wait forever on this call
     }
 
     static void process_sensor(void* arg) {

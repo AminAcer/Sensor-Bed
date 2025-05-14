@@ -101,9 +101,4 @@ namespace sensors {
         /// @brief Mutex to guard data
         mutable std::mutex dataMutex;
     };
-
-    /// @brief Starts the receive thread for a socket and sets the callback
-    ///
-    /// @param i2c_interface: The I2C Interface to start receiving data from
-    void start_receive(i2c::I2C_Interface* i2c_interface);
 }  // namespace sensors
