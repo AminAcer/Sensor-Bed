@@ -35,7 +35,8 @@
 namespace sensors {
     const static char* BNO_TAG = "bno055";
 
-    BNO055::BNO055(i2c::I2C_Config cfg) : i2c::I2C_Interface(cfg) {
+    BNO055::BNO055(i2c::I2C_Config cfg, i2c_master_bus_handle_t bus_handle)
+        : i2c::I2C_Interface(cfg, bus_handle) {
         init();
     }
 

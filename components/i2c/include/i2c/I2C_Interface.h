@@ -11,10 +11,6 @@ namespace i2c {
     struct I2C_Config {
         /// @brief Name for the sensor
         std::string name;
-        /// @brief Port number for the SDA line
-        gpio_num_t sda;
-        /// @brief Port number for the SCL line
-        gpio_num_t scl;
         /// @brief Device address
         uint16_t dev_addr;
         /// @brief Rate of the SCL line
@@ -26,7 +22,8 @@ namespace i2c {
         /// @brief Constructor
         ///
         /// @param cfg: I2C Config
-        explicit I2C_Interface(I2C_Config cfg);
+        /// @param bus_handle: I2C Bus Handle to add device handle to
+        I2C_Interface(I2C_Config cfg, i2c_master_bus_handle_t bus_handle);
         ~I2C_Interface() = default;
 
         // === Rule Of 5 ===
@@ -75,4 +72,14 @@ namespace i2c {
     ///
     /// @param i2c_interface: The I2C Interface to start
     void start_sensor(I2C_Interface* i2c_interface);
+
+    /// @brief Starts the run/process loop of a sensor in a Task
+    ///
+    /// @param sda_port: The pin number for the SDA line
+    /// @param scl_port: The pin number for the SCL line
+    /// @param i2c_port: The i2c port (either NUM_0 or NUM_1)
+    ///
+    /// @return i2c_master_bus_handle_t: Configured master bus handle
+    i2c_master_bus_handle_t init_i2c_master_bus(gpio_num_t sda_port, gpio_num_t scl_port,
+                                                i2c_port_num_t i2c_port);
 }  // namespace i2c

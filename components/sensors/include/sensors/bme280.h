@@ -41,7 +41,8 @@ namespace sensors {
         /// @brief Constructor for a UDP socket
         ///
         /// @param cfg: I2C Config
-        explicit BME280(i2c::I2C_Config cfg);
+        /// @param bus_handle: I2C Bus Handle to add device handle to
+        BME280(i2c::I2C_Config cfg, i2c_master_bus_handle_t bus_handle);
         ~BME280() = default;
 
         // === Rule Of 5 ===
@@ -97,7 +98,7 @@ namespace sensors {
         uint32_t pressure;
 
         /// @brief Temperature readings from the sensor
-        int32_t temperature;
+        float temperature;
 
         /// @brief Mutex to guard data
         mutable std::mutex dataMutex;

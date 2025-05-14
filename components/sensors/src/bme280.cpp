@@ -34,19 +34,22 @@
 namespace sensors {
     const static char* BME_TAG = "bme280";
 
-    BME280::BME280(i2c::I2C_Config cfg) : i2c::I2C_Interface(cfg) {
+    BME280::BME280(i2c::I2C_Config cfg, i2c_master_bus_handle_t bus_handle)
+        : i2c::I2C_Interface(cfg, bus_handle) {
         init();
         // Read/Store calibration data for Compensation calculations
         read_calibration();
     }
 
     void BME280::run() {
+        // Collect latest Humidity/Pressure/Temperature readings
+        read_all();
         // Collect latest Humidity readings
-        read_humidity();
+        // read_humidity();
         // Collect latest Pressure readings
-        read_pressure();
+        // read_pressure();
         // Collect latest Temperature readings
-        read_temperature();
+        // read_temperature();
     }
 
     esp_err_t BME280::init() {
@@ -149,7 +152,8 @@ namespace sensors {
         int32_t t_fine = var1 + var2;
 
         std::lock_guard lock(dataMutex);
-        temperature = (t_fine * 5 + 128) >> 8;
+        temperature = (float)((t_fine * 5 + 128) >> 8) / 100.0;
+        ESP_LOGI(BME_TAG, "Temperature : %f", temperature);
     }
 
     void BME280::read_humidity() {

@@ -8,20 +8,8 @@
 
 const static char* TAG = "I2C";
 namespace i2c {
-    I2C_Interface::I2C_Interface(I2C_Config cfg) : name(cfg.name) {
-        i2c_master_bus_config_t i2c_master_config = {
-            .i2c_port = I2C_NUM_1,
-            .sda_io_num = cfg.sda,
-            .scl_io_num = cfg.scl,
-            .clk_source = I2C_CLK_SRC_DEFAULT,
-            .glitch_ignore_cnt = 7,
-            .flags = {.enable_internal_pullup = true, .allow_pd = false},
-        };
-
-        if (i2c_new_master_bus(&i2c_master_config, &bus_handle) != ESP_OK) {
-            D_LOGW(TAG, "I2C failed to initialize");
-        }
-
+    I2C_Interface::I2C_Interface(I2C_Config cfg, i2c_master_bus_handle_t bus_handle)
+        : name(cfg.name) {
         i2c_device_config_t dev_cfg = {
             .dev_addr_length = I2C_ADDR_BIT_LEN_7,
             .device_address = cfg.dev_addr,
@@ -29,10 +17,8 @@ namespace i2c {
         };
 
         if (i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle) != ESP_OK) {
-            D_LOGW(TAG, "I2C failed to add device");
+            D_LOGW(TAG, "I2C failed to add device: %s", cfg.name.c_str());
         }
-
-        D_LOGI(TAG, "I2C init successful");
     }
 
     esp_err_t I2C_Interface::write(uint8_t reg, uint8_t data) {
@@ -44,6 +30,25 @@ namespace i2c {
     esp_err_t I2C_Interface::read(uint8_t reg, uint8_t* data, size_t len) {
         return i2c_master_transmit_receive(dev_handle, &reg, 1, data, len,
                                            -1);  // Wait forever on this call
+    }
+
+    i2c_master_bus_handle_t init_i2c_master_bus(gpio_num_t sda_port, gpio_num_t scl_port,
+                                                i2c_port_num_t i2c_port) {
+        i2c_master_bus_config_t i2c_master_config = {
+            .i2c_port = i2c_port,
+            .sda_io_num = sda_port,
+            .scl_io_num = scl_port,
+            .clk_source = I2C_CLK_SRC_DEFAULT,
+            .glitch_ignore_cnt = 7,
+            .flags = {.enable_internal_pullup = true, .allow_pd = false},
+        };
+
+        i2c_master_bus_handle_t bus_handle;
+        if (i2c_new_master_bus(&i2c_master_config, &bus_handle) != ESP_OK) {
+            D_LOGW(TAG, "I2C failed to initialize");
+        }
+
+        return bus_handle;
     }
 
     static void process_sensor(void* arg) {

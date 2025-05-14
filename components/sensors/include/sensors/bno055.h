@@ -27,7 +27,8 @@ namespace sensors {
         /// @brief Constructor for a UDP socket
         ///
         /// @param cfg: I2C Config
-        explicit BNO055(i2c::I2C_Config cfg);
+        /// @param bus_handle: I2C Bus Handle to add device handle to
+        BNO055(i2c::I2C_Config cfg, i2c_master_bus_handle_t bus_handle);
         ~BNO055() = default;
 
         // === Rule Of 5 ===
