@@ -1,0 +1,21 @@
+
+GPS Sensor(s) (UART)
+- Add UART interface
+- Add GPS sensor 1 and 2
+- Fuse readings from both sensors into one agreed upon reading
+
+Ground Station Entity
+- Using all sensor data, create an EntityPDU for the ground station
+- Broadcast all data to a socket for a GUI service to display
+
+All Sensors
+- Add configurable hz to task that runs the process loop
+	- (each sensor updates its measurements at different hz)
+
+Add Scheduler Component
+- Make a scheduler that properly creates/prioritizes RTOS tasks
+
+Add Bitwise Component (maybe)
+- Contains util functions that do bitwise ops cleanly
+
+Integrate LoRa antenna (future)
