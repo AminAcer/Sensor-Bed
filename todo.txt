@@ -1,11 +1,4 @@
 
-BNO055 Sensor
-- Clean up documentation
-
-BME-280 Sensor
-- Add compensation formulas for humidity and pressure
-- Cleanup read functions
-
 GPS Sensor(s) (UART)
 - Add UART interface
 - Add GPS sensor 1 and 2

@@ -16,21 +16,17 @@
 #define BNO055_PAGE_ID_ADDR 0x07
 
 /// @brief Data register starting points
-#define BNO055_EULER_H_LSB 0x1A  // Euler Heading, Roll, Pitch start here (6 bytes, 2 per)
-#define BNO055_MAG_X_LSB 0x0E    // Magnetometer X, Y, Z start here (6 bytes, 2 per)
-#define BNO055_GYRO_X_LSB 0x14   // Gyroscope X, Y, Z start here (6 bytes, 2 per)
-#define BNO055_ACC_X_LSB 0x08    // Accelerometer X, Y, Z start here (6 bytes, 2 per)
+#define BNO055_EULER_H_LSB 0x1A  // Euler Heading, Roll, Pitch (6 bytes, 2 per)
+#define BNO055_MAG_X_LSB 0x0E    // Magnetometer X, Y, Z (6 bytes, 2 per)
+#define BNO055_GYRO_X_LSB 0x14   // Gyroscope X, Y, Z (6 bytes, 2 per)
+#define BNO055_ACC_X_LSB 0x08    // Accelerometer X, Y, Z (6 bytes, 2 per)
 #define BNO055_CHIP_TEMP 0x34    // Chip Temperature (1 byte)
 
 /// @brief Chip ID
 #define BNO055_ID 0xA0
 
 /// @brief Operating modes
-#define OPERATION_MODE_CONFIG 0x00
 #define OPERATION_MODE_NDOF 0x0C
-
-/// @brief Power modes
-#define POWER_MODE_NORMAL 0x00
 
 namespace sensors {
     const static char* BNO_TAG = "bno055";
@@ -62,11 +58,11 @@ namespace sensors {
         }
 
         // Set to config mode
-        ESP_ERROR_CHECK(write(BNO055_OPR_MODE_ADDR, OPERATION_MODE_CONFIG));
+        ESP_ERROR_CHECK(write(BNO055_OPR_MODE_ADDR, 0x00));
         vTaskDelay(pdMS_TO_TICKS(25));
 
         // Set power mode
-        ESP_ERROR_CHECK(write(BNO055_PWR_MODE_ADDR, POWER_MODE_NORMAL));
+        ESP_ERROR_CHECK(write(BNO055_PWR_MODE_ADDR, 0x00));
         vTaskDelay(pdMS_TO_TICKS(25));
 
         // Use page 0
