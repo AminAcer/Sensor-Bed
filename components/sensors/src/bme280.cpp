@@ -11,22 +11,19 @@
 
 /// @brief Control registers
 #define BME280_CHIP_ID_ADDR 0xD0
-#define BME280_RST_ADDR 0xE0
 #define BME280_CTRL_HUM_ADDR 0xF2
 #define BME280_CTRL_MEAS_ADDR 0xF4
 #define BME280_CFG_ADDR 0xF5
 
 /// @brief Data register starting points
-#define BME280_HUM_MSB 0xFD    // Humidity starts here (2 bytes total, 15:0)
-#define BME280_PRESS_MSB 0xF7  // Pressure starts here (3 bytes total, 19:0)
-#define BME280_TEMP_MSB 0xFA   // Temperature starts here (3 bytes total, 19:0)
+#define BME280_HUM_MSB 0xFD    // Humidity (2 bytes total, 15:0)
+#define BME280_PRESS_MSB 0xF7  // Pressure (3 bytes total, 19:0)
+#define BME280_TEMP_MSB 0xFA   // Temperature (3 bytes total, 19:0)
 
 /// @brief Calibration register starting points
-#define BME280_CALI_TEMP_PRESS \
-    0x88                         // Calibration data for Temp/Pressure starts here (26 bytes total)
-#define BME280_CALI_HUM_H1 0xA1  // H1 Calibration data (1 byte total)
-#define BME280_CALI_HUM_H2_TO_H6 \
-    0xE1  // H2, H3, H4, H5, H6 Calibration data starts here (7 bytes total)
+#define BME280_CALI_TEMP_PRESS 0x88    // Calibration data for Temp/Pressure (26 bytes total)
+#define BME280_CALI_HUM_H1 0xA1        // H1 Calibration data (1 byte total)
+#define BME280_CALI_HUM_H2_TO_H6 0xE1  // H2-H6 Calibration data starts here (7 bytes total)
 
 /// @brief Chip ID
 #define BME280_ID 0x60
@@ -44,12 +41,6 @@ namespace sensors {
     void BME280::run() {
         // Collect latest Humidity/Pressure/Temperature readings
         read_all();
-        // Collect latest Humidity readings
-        // read_humidity();
-        // Collect latest Pressure readings
-        // read_pressure();
-        // Collect latest Temperature readings
-        // read_temperature();
     }
 
     esp_err_t BME280::init() {
@@ -142,6 +133,19 @@ namespace sensors {
         uint32_t raw_hum = (buffer[6] << 8) | buffer[7];
 
         // Compensation formulas from BME280 datasheet
+        int32_t t_fine = solve_tfine(raw_temp);
+
+        std::lock_guard lock(dataMutex);
+        temperature = (float)((t_fine * 5 + 128) >> 8) / 100.0;
+        pressure = compensate_pressure(raw_press, t_fine);
+        humidity = (double)compensate_humidity(raw_hum, t_fine) / 1024.0;
+
+        ESP_LOGV(BME_TAG, "Temperature : %f", temperature);
+        ESP_LOGV(BME_TAG, "Pressure: %f", pressure);
+        ESP_LOGV(BME_TAG, "Humidity: %" PRIu32, humidity);
+    }
+
+    int32_t BME280::solve_tfine(uint32_t raw_temp) {
         int32_t var1 =
             ((((raw_temp >> 3) - ((int32_t)cali.dig_T1 << 1))) * ((int32_t)cali.dig_T2)) >> 11;
         int32_t var2 = (((((raw_temp >> 4) - ((int32_t)cali.dig_T1)) *
@@ -150,22 +154,49 @@ namespace sensors {
                         ((int32_t)cali.dig_T3)) >>
                        14;
         int32_t t_fine = var1 + var2;
-
-        std::lock_guard lock(dataMutex);
-        temperature = (float)((t_fine * 5 + 128) >> 8) / 100.0;
-        ESP_LOGI(BME_TAG, "Temperature : %f", temperature);
+        return t_fine;
     }
 
-    void BME280::read_humidity() {
-        // ESP_LOGV(BME_TAG, "Chip Temperature: %d", temperature);
+    double BME280::compensate_pressure(uint32_t raw_pressure, int32_t t_fine) {
+        double var1 = ((double)t_fine / 2.0) - 64000.0;
+        double var2 = var1 * var1 * ((double)cali.dig_P6) / 32768.0;
+        var2 = var2 + var1 * ((double)cali.dig_P5) * 2.0;
+        var2 = (var2 / 4.0) + (((double)cali.dig_P4) * 65536.0);
+        var1 = (((double)cali.dig_P3) * var1 * var1 / 524288.0 + ((double)cali.dig_P2) * var1) /
+               524288.0;
+        var1 = (1.0 + var1 / 32768.0) * ((double)cali.dig_P1);
+        if (var1 == 0) {
+            return 0;  // Avoid dividing by 0
+        }
+        double p = 1048576.0 - (double)raw_pressure;
+        p = (p - (var2 / 4096.0)) * 6250.0 / var1;
+        var1 = ((double)cali.dig_P9) * p * p / 2147483648.0;
+        var2 = p * ((double)cali.dig_P8) / 32768.0;
+        p = p + (var1 + var2 + ((double)cali.dig_P7)) / 16.0;
+        return p;
     }
 
-    void BME280::read_pressure() {
-        // ESP_LOGV(BME_TAG, "Chip Temperature: %d", temperature);
-    }
+    uint32_t BME280::compensate_humidity(uint32_t raw_humidity, int32_t t_fine) {
+        int32_t v_x1_u32r = t_fine - (int32_t)76800;
+        v_x1_u32r = (((((raw_humidity << 14) - (((int32_t)cali.dig_H4) << 20) -
+                        (((int32_t)cali.dig_H5) * v_x1_u32r)) +
+                       ((int32_t)16384)) >>
+                      15) *
+                     (((((((v_x1_u32r * ((int32_t)cali.dig_H6)) >> 10) *
+                          (((v_x1_u32r * ((int32_t)cali.dig_H3)) >> 11) + ((int32_t)32768))) >>
+                         10) +
+                        ((int32_t)2097152)) *
+                           ((int32_t)cali.dig_H2) +
+                       8192) >>
+                      14));
 
-    void BME280::read_temperature() {
-        // ESP_LOGV(BME_TAG, "AccX: %d, AccY: %d, AccZ: %d", acc.x, acc.y, acc.z);
+        v_x1_u32r =
+            (v_x1_u32r -
+             (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((int32_t)cali.dig_H1)) >> 4));
+        v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r);
+        v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
+
+        return (uint32_t)(v_x1_u32r >> 12);
     }
 
     uint32_t BME280::getHumidity() const {
@@ -173,12 +204,12 @@ namespace sensors {
         return humidity;
     }
 
-    uint32_t BME280::getPressure() const {
+    double BME280::getPressure() const {
         std::lock_guard lock(dataMutex);
         return pressure;
     }
 
-    int32_t BME280::getTemperature() const {
+    float BME280::getTemperature() const {
         std::lock_guard lock(dataMutex);
         return temperature;
     }

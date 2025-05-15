@@ -58,13 +58,13 @@ namespace sensors {
 
         /// @brief Method to retrieve latest Pressure readings
         ///
-        /// @return uint32_t: Latest Pressure readings
-        [[nodiscard]] uint32_t getPressure() const;
+        /// @return double: Latest Pressure readings
+        [[nodiscard]] double getPressure() const;
 
         /// @brief Method to retrieve latest Temperature readings
         ///
-        /// @return int32_t: Latest Temperature readings
-        [[nodiscard]] int32_t getTemperature() const;
+        /// @return float: Latest Temperature readings
+        [[nodiscard]] float getTemperature() const;
 
         /// @brief I2C Interface function that runs the sensor
         virtual void run() override;
@@ -79,14 +79,28 @@ namespace sensors {
         /// @brief Method to read/store Humidity, Pressure, and Temperature data from sensor
         void read_all();
 
-        /// @brief Method to read/process Humidity data from sensor
-        void read_humidity();
+        /// @brief Method to find the T_Fine value through compensation formulas
+        ///
+        /// @param raw_temp: Raw temperature
+        ///
+        /// @return int32_t: Calculated T_Fine parameter
+        int32_t solve_tfine(uint32_t raw_temp);
 
-        /// @brief Method to read/process Pressure data from sensor
-        void read_pressure();
+        /// @brief Method to calculate Pressure using compensation formulas
+        ///
+        /// @param raw_pressure: Raw pressure from data line
+        /// @param t_fine: Previously calculated T_Fine param
+        ///
+        /// @return double: Calculated Pressure
+        double compensate_pressure(uint32_t raw_pressure, int32_t t_fine);
 
-        /// @brief Method to read/process Temperature data from sensor
-        void read_temperature();
+        /// @brief Method to calculate Humidity using compensation formulas
+        ///
+        /// @param raw_humidity: Raw humidity from data line
+        /// @param t_fine: Previously calculated T_Fine param
+        ///
+        /// @return uint32_t: Calculated Humidity
+        uint32_t compensate_humidity(uint32_t raw_humidity, int32_t t_fine);
 
         /// @brief Calibration readings from the sensor
         bme280_calibration_data cali;
@@ -95,7 +109,7 @@ namespace sensors {
         uint32_t humidity;
 
         /// @brief Pressure readings from the sensor
-        uint32_t pressure;
+        double pressure;
 
         /// @brief Temperature readings from the sensor
         float temperature;
