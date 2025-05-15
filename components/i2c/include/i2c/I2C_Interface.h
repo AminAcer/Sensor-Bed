@@ -61,9 +61,6 @@ namespace i2c {
         /// @return int: Result of the function (ESP_OK: Success | OTHERS: Failure)
         virtual esp_err_t read(uint8_t reg, uint8_t* data, size_t len);
 
-        /// @brief Bus Handle
-        i2c_master_bus_handle_t bus_handle;
-
         /// @brief Device Handle
         i2c_master_dev_handle_t dev_handle;
     };
