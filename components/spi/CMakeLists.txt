@@ -1,12 +1,10 @@
 idf_component_register(SRCS
-                         "src/bno055.cpp"
-                         "src/bme280.cpp"
-                         "src/ada254.cpp"
+                         "src/SPI_Interface.cpp"
                        INCLUDE_DIRS
                          "include"
                        REQUIRES
-                         i2c
-                         spi
+                         esp_driver_spi
+                         fatfs
                          logger
                          constants
 )

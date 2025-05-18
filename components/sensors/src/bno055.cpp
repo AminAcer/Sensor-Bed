@@ -29,11 +29,12 @@
 #define OPERATION_MODE_NDOF 0x0C
 
 namespace sensors {
-    const static char* BNO_TAG = "bno055";
-
     BNO055::BNO055(i2c::I2C_Config cfg, i2c_master_bus_handle_t bus_handle)
         : i2c::I2C_Interface(cfg, bus_handle) {
         init();
+
+        // Start the sensor
+        start_sensor(this);
     }
 
     void BNO055::run() {
@@ -53,7 +54,7 @@ namespace sensors {
         uint8_t id = 0;
         ESP_ERROR_CHECK(read(BNO055_CHIP_ID_ADDR, &id, 1));
         if (id != BNO055_ID) {
-            ESP_LOGE(BNO_TAG, "Unexpected chip ID: 0x%02X", id);
+            ESP_LOGE(name.c_str(), "Unexpected chip ID: 0x%02X", id);
             return ESP_FAIL;
         }
 
@@ -96,7 +97,7 @@ namespace sensors {
         euler.roll = roll / 16.0f;
         euler.pitch = pitch / 16.0f;
 
-        ESP_LOGV(BNO_TAG, "Heading: %.2f, Roll: %.2f, Pitch: %.2f", euler.heading, euler.roll,
+        ESP_LOGV(name.c_str(), "Heading: %.2f, Roll: %.2f, Pitch: %.2f", euler.heading, euler.roll,
                  euler.pitch);
     }
 
@@ -116,7 +117,7 @@ namespace sensors {
         mag.y = y;
         mag.z = z;
 
-        ESP_LOGV(BNO_TAG, "MagX: %d, MagY: %d, MagZ: %d", mag.x, mag.y, mag.z);
+        ESP_LOGV(name.c_str(), "MagX: %d, MagY: %d, MagZ: %d", mag.x, mag.y, mag.z);
     }
 
     void BNO055::read_acc() {
@@ -135,7 +136,7 @@ namespace sensors {
         acc.y = y;
         acc.z = z;
 
-        ESP_LOGV(BNO_TAG, "AccX: %d, AccY: %d, AccZ: %d", acc.x, acc.y, acc.z);
+        ESP_LOGV(name.c_str(), "AccX: %d, AccY: %d, AccZ: %d", acc.x, acc.y, acc.z);
     }
 
     void BNO055::read_gyro() {
@@ -154,7 +155,7 @@ namespace sensors {
         gyro.y = y;
         gyro.z = z;
 
-        ESP_LOGV(BNO_TAG, "GyroX: %d, GyroY: %d, GyroZ: %d", gyro.x, gyro.y, gyro.z);
+        ESP_LOGV(name.c_str(), "GyroX: %d, GyroY: %d, GyroZ: %d", gyro.x, gyro.y, gyro.z);
     }
 
     void BNO055::read_temp() {
@@ -166,7 +167,7 @@ namespace sensors {
         std::lock_guard lock(dataMutex);
         temperature = (int8_t)buffer[0];
 
-        ESP_LOGV(BNO_TAG, "Chip Temperature: %d", temperature);
+        ESP_LOGV(name.c_str(), "Chip Temperature: %d", temperature);
     }
 
     bno055_euler BNO055::getEuler() const {

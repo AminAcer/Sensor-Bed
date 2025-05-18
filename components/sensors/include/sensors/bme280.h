@@ -1,11 +1,9 @@
 #pragma once
 
 #include <driver/i2c_types.h>
-#include <esp_err.h>
 #include <soc/gpio_num.h>
 
 #include <cstdint>
-#include <mutex>
 
 #include "i2c/I2C_Interface.h"
 
@@ -38,7 +36,7 @@ namespace sensors {
 
     class BME280 : public i2c::I2C_Interface {
        public:
-        /// @brief Constructor for a UDP socket
+        /// @brief Constructor
         ///
         /// @param cfg: I2C Config
         /// @param bus_handle: I2C Bus Handle to add device handle to
@@ -46,10 +44,10 @@ namespace sensors {
         ~BME280() = default;
 
         // === Rule Of 5 ===
-        BME280(const BME280&) = delete;                 // Copy constructor
-        BME280& operator=(const BME280&) = delete;      // Copy assignment
-        BME280(BME280&&) noexcept = delete;             // Move constructor
-        BME280& operator=(BME280&&) noexcept = delete;  // Move assignment
+        BME280(const BME280&) = delete;             // Copy constructor
+        BME280& operator=(const BME280&) = delete;  // Copy assignment
+        BME280(BME280&&) = delete;                  // Move constructor
+        BME280& operator=(BME280&&) = delete;       // Move assignment
 
         /// @brief Method to retrieve latest Humidity readings
         ///
@@ -67,11 +65,11 @@ namespace sensors {
         [[nodiscard]] float getTemperature() const;
 
         /// @brief I2C Interface function that runs the sensor
-        virtual void run() override;
+        void run() final;
 
        private:
         /// @brief I2C Interface function that initializes the sensor
-        virtual esp_err_t init() override;
+        esp_err_t init() final;
 
         /// @brief Method to read/store Calibration data from sensor
         void read_calibration();
@@ -113,8 +111,5 @@ namespace sensors {
 
         /// @brief Temperature readings from the sensor
         float temperature;
-
-        /// @brief Mutex to guard data
-        mutable std::mutex dataMutex;
     };
 }  // namespace sensors
