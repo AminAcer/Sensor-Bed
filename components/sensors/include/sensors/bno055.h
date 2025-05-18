@@ -5,7 +5,6 @@
 #include <soc/gpio_num.h>
 
 #include <cstdint>
-#include <mutex>
 
 #include "i2c/I2C_Interface.h"
 
@@ -24,7 +23,7 @@ namespace sensors {
 
     class BNO055 : public i2c::I2C_Interface {
        public:
-        /// @brief Constructor for a UDP socket
+        /// @brief Constructor
         ///
         /// @param cfg: I2C Config
         /// @param bus_handle: I2C Bus Handle to add device handle to
@@ -32,10 +31,10 @@ namespace sensors {
         ~BNO055() = default;
 
         // === Rule Of 5 ===
-        BNO055(const BNO055&) = delete;                 // Copy constructor
-        BNO055& operator=(const BNO055&) = delete;      // Copy assignment
-        BNO055(BNO055&&) noexcept = delete;             // Move constructor
-        BNO055& operator=(BNO055&&) noexcept = delete;  // Move assignment
+        BNO055(const BNO055&) = delete;             // Copy constructor
+        BNO055& operator=(const BNO055&) = delete;  // Copy assignment
+        BNO055(BNO055&&) = delete;                  // Move constructor
+        BNO055& operator=(BNO055&&) = delete;       // Move assignment
 
         /// @brief Method to retrieve latest Euler readings
         ///
@@ -63,11 +62,11 @@ namespace sensors {
         [[nodiscard]] int8_t getTemp() const;
 
         /// @brief I2C Interface function that runs the sensor
-        virtual void run() override;
+        void run() final;
 
        private:
         /// @brief I2C Interface function that initializes the sensor
-        virtual esp_err_t init() override;
+        esp_err_t init() final;
 
         /// @brief Method to read/process Euler data from sensor
         void read_euler();
@@ -98,8 +97,5 @@ namespace sensors {
 
         /// @brief Temperature of the sensor chip itself (celsius)
         int8_t temperature;
-
-        /// @brief Mutex to guard data
-        mutable std::mutex dataMutex;
     };
 }  // namespace sensors

@@ -2,7 +2,6 @@
 GPS Sensor(s) (UART)
 - Add UART interface
 - Add GPS sensor 1 and 2
-- Fuse readings from both sensors into one agreed upon reading
 
 Ground Station Entity
 - Using all sensor data, create an EntityPDU for the ground station
@@ -17,5 +16,8 @@ Add Scheduler Component
 
 Add Bitwise Component (maybe)
 - Contains util functions that do bitwise ops cleanly
+
+- Add Sensor Fusion for data that can come from multiple sensors
+	- Add "DataManager" that stores latest fused values
 
 Integrate LoRa antenna (future)

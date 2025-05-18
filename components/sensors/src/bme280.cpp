@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <mutex>
 
+#include "i2c/I2C_Interface.h"
+
 /// @brief Control registers
 #define BME280_CHIP_ID_ADDR 0xD0
 #define BME280_CTRL_HUM_ADDR 0xF2
@@ -29,13 +31,14 @@
 #define BME280_ID 0x60
 
 namespace sensors {
-    const static char* BME_TAG = "bme280";
-
     BME280::BME280(i2c::I2C_Config cfg, i2c_master_bus_handle_t bus_handle)
         : i2c::I2C_Interface(cfg, bus_handle) {
         init();
         // Read/Store calibration data for Compensation calculations
         read_calibration();
+
+        // Start the sensor
+        start_sensor(this);
     }
 
     void BME280::run() {
@@ -47,7 +50,7 @@ namespace sensors {
         uint8_t id = 0;
         ESP_ERROR_CHECK(read(BME280_CHIP_ID_ADDR, &id, 1));
         if (id != BME280_ID) {
-            ESP_LOGE(BME_TAG, "Unexpected chip ID: 0x%02X", id);
+            ESP_LOGE(name.c_str(), "Unexpected chip ID: 0x%02X", id);
             return ESP_FAIL;
         }
 
@@ -140,9 +143,9 @@ namespace sensors {
         pressure = compensate_pressure(raw_press, t_fine);
         humidity = (double)compensate_humidity(raw_hum, t_fine) / 1024.0;
 
-        ESP_LOGV(BME_TAG, "Temperature : %f", temperature);
-        ESP_LOGV(BME_TAG, "Pressure: %f", pressure);
-        ESP_LOGV(BME_TAG, "Humidity: %" PRIu32, humidity);
+        ESP_LOGV(name.c_str(), "Temperature : %f", temperature);
+        ESP_LOGV(name.c_str(), "Pressure: %f", pressure);
+        ESP_LOGV(name.c_str(), "Humidity: %" PRIu32, humidity);
     }
 
     int32_t BME280::solve_tfine(uint32_t raw_temp) {

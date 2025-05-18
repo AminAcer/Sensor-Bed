@@ -5,15 +5,16 @@
 #include <soc/gpio_num.h>
 
 #include <cstdint>
+#include <mutex>
 #include <string>
 
 namespace i2c {
     struct I2C_Config {
-        /// @brief Name for the sensor
+        /// Name for the sensor
         std::string name;
-        /// @brief Device address
+        /// Device address
         uint16_t dev_addr;
-        /// @brief Rate of the SCL line
+        /// Rate of the SCL line
         uint16_t scl_speed_hz;
     };
 
@@ -27,10 +28,10 @@ namespace i2c {
         ~I2C_Interface() = default;
 
         // === Rule Of 5 ===
-        I2C_Interface(const I2C_Interface&) = default;                 // Copy constructor
-        I2C_Interface& operator=(const I2C_Interface&) = default;      // Copy assignment
-        I2C_Interface(I2C_Interface&&) noexcept = default;             // Move constructor
-        I2C_Interface& operator=(I2C_Interface&&) noexcept = default;  // Move assignment
+        I2C_Interface(const I2C_Interface&) = delete;             // Copy constructor
+        I2C_Interface& operator=(const I2C_Interface&) = delete;  // Copy assignment
+        I2C_Interface(I2C_Interface&&) = delete;                  // Move constructor
+        I2C_Interface& operator=(I2C_Interface&&) = delete;       // Move assignment
 
         /// @brief Sensor-specific run function that constantly gets data from the sensor
         virtual void run() = 0;
@@ -63,6 +64,9 @@ namespace i2c {
 
         /// @brief Device Handle
         i2c_master_dev_handle_t dev_handle;
+
+        /// @brief Mutex to guard data
+        mutable std::mutex dataMutex;
     };
 
     /// @brief Starts the run/process loop of a sensor in a Task
@@ -70,7 +74,7 @@ namespace i2c {
     /// @param i2c_interface: The I2C Interface to start
     void start_sensor(I2C_Interface* i2c_interface);
 
-    /// @brief Starts the run/process loop of a sensor in a Task
+    /// @brief Initializes the I2C Master bus on the requested pins
     ///
     /// @param sda_port: The pin number for the SDA line
     /// @param scl_port: The pin number for the SCL line

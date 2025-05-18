@@ -6,8 +6,9 @@
 #include "esp_err.h"
 #include "logger/logger.h"
 
-const static char* TAG = "I2C";
 namespace i2c {
+    const static char* TAG = "I2C";
+
     I2C_Interface::I2C_Interface(I2C_Config cfg, i2c_master_bus_handle_t bus_handle)
         : name(cfg.name) {
         i2c_device_config_t dev_cfg = {
