@@ -11,7 +11,6 @@ idf_component_register(SRCS
                          dis
                          wifi
                          sensors
-                         spi
                        PRIV_REQUIRES
                          cxx
 )

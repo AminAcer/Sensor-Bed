@@ -4,6 +4,8 @@
 #include <cstdint>
 
 #include "dis/dis.h"
+#include "driver/uart.h"
+#include "hal/uart_types.h"
 #include "logger/logger.h"
 #include "sensors/ada254.h"
 #include "sensors/bme280.h"
@@ -37,10 +39,10 @@ extern "C" void app_main() {
         i2c::init_i2c_master_bus(GPIO_NUM_7, GPIO_NUM_6, I2C_NUM_1);
 
     // Init SPI Master bus
-    ESP_ERROR_CHECK(spi::init_spi_master_bus(GPIO_NUM_41, GPIO_NUM_40, GPIO_NUM_42, SPI3_HOST));
+    ESP_ERROR_CHECK(spi::init_spi_master_bus(GPIO_NUM_42, GPIO_NUM_41, GPIO_NUM_45, SPI3_HOST));
 
     static auto ada254 = sensors::ADA254(
-        spi::SPI_Config{.name = "ADA254", .cs = GPIO_NUM_39, .speed_hz = (uint16_t)50000});
+        spi::SPI_Config{.name = "ADA254", .cs = GPIO_NUM_40, .speed_hz = (uint16_t)50000});
 
     static auto bno055 = sensors::BNO055(
         i2c::I2C_Config{.name = "BNO055", .dev_addr = 0x28, .scl_speed_hz = (uint16_t)100000},
@@ -53,6 +55,26 @@ extern "C" void app_main() {
     static auto bme280_2 = sensors::BME280(
         i2c::I2C_Config{.name = "BME280-2", .dev_addr = 0x77, .scl_speed_hz = (uint16_t)100000},
         bus_handle);
+
+    uart_config_t gps1_cfg = {.baud_rate = 9600,
+                              .data_bits = UART_DATA_8_BITS,
+                              .parity = UART_PARITY_DISABLE,
+                              .stop_bits = UART_STOP_BITS_1,
+                              .flow_ctrl = UART_HW_FLOWCTRL_DISABLE};
+    uart_param_config(UART_NUM_0, &gps1_cfg);
+    uart_set_pin(UART_NUM_0, GPIO_NUM_5, GPIO_NUM_4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_driver_install(UART_NUM_0, 4096 * 2, 0, 0, NULL, 0);
+
+    uint8_t* gps1_data = (uint8_t*)malloc(4096);
+    while (true) {
+        ESP_LOGI(TAG, "INSIDE");
+        int len = uart_read_bytes(UART_NUM_0, gps1_data, 4096 - 1, pdMS_TO_TICKS(50));
+        if (len > 0) {
+            gps1_data[len] = '\0';
+            D_LOGI(TAG, "GPS data: %s", (char*)gps1_data);
+        } else {
+        }
+    }
 
     // Write latest data to the SD Card at 20hz
     while (true) {
