@@ -39,7 +39,7 @@ namespace sockets::udp {
         int sockfd{};
 
         // @brief Socket address
-        struct sockaddr_in server_addr{};
+        struct sockaddr_in server_addr;
 
         // @brief Socket address length
         socklen_t addr_len{};

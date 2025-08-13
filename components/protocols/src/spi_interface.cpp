@@ -1,4 +1,4 @@
-#include "spi/SPI_Interface.h"
+#include "protocols/spi_interface.h"
 
 #include <logger/logger.h>
 

@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-#include "i2c/I2C_Interface.h"
+#include "protocols/i2c_interface.h"
 
 namespace sensors {
     struct bme280_calibration_data {
