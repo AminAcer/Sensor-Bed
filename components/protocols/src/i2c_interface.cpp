@@ -1,4 +1,4 @@
-#include "i2c/I2C_Interface.h"
+#include "protocols/i2c_interface.h"
 
 #include <driver/i2c_master.h>
 #include <driver/i2c_types.h>
@@ -71,7 +71,7 @@ namespace i2c {
 
         const char* task_name = sensor->name.c_str();
         xTaskCreatePinnedToCore(process_sensor, task_name,
-                                4096,           // Allocate 16KB to the stack of this task
+                                4096,           // Allocate 4KB to the stack of this task
                                 (void*)sensor,  // Pass the sensor argument in
                                 6, NULL, 1);
     }

@@ -3,8 +3,8 @@
 #include <driver/i2c_types.h>
 #include <soc/gpio_num.h>
 
+#include "protocols/spi_interface.h"
 #include "sd_protocol_types.h"
-#include "spi/SPI_Interface.h"
 
 namespace sensors {
     enum class FileName { ORIENT = 1, TEMP = 2, PRESSURE = 3, HUMIDITY = 4 };

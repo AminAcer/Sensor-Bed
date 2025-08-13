@@ -1,5 +1,3 @@
-#include "sockets/sockets.h"
-
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -9,6 +7,7 @@
 
 #include "constants/general.h"
 #include "logger/logger.h"
+#include "sockets/sockets.h"
 
 namespace sockets::udp {
     static const char* TAG = "SOCKETS";
@@ -44,7 +43,7 @@ namespace sockets::udp {
     }
 
     void basic_handle(const char* msg) {
-        D_LOGI(TAG, "Received message: %s", msg);
+        D_LOGI(TAG, "received data:\n%s", msg);
     }
 
     static void receive_thread(void* arg) {

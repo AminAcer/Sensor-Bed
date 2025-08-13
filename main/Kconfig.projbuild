@@ -17,3 +17,17 @@ menu "Wi-Fi Configuration"
         help
             Enter the max amount of connect attemts to connect to Wi-Fi.
 endmenu
+
+menu "Build Configuration"
+    choice
+        prompt "Select which device you want to flash:"
+        default BENCH_BUILD_ENABLED
+
+    config BENCH_BUILD_ENABLED
+        bool "Bench"
+
+    config RADIO_BUILD_ENABLED
+        bool "Radio"
+
+    endchoice
+endmenu

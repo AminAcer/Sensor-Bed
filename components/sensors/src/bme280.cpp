@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <mutex>
 
-#include "i2c/I2C_Interface.h"
+#include "protocols/i2c_interface.h"
 
 /// @brief Control registers
 #define BME280_CHIP_ID_ADDR 0xD0

@@ -14,8 +14,8 @@
 #include "hal/spi_types.h"
 #include "logger/logger.h"
 #include "pgmspace.h"
+#include "protocols/spi_interface.h"
 #include "sd_protocol_types.h"
-#include "spi/SPI_Interface.h"
 
 namespace sensors {
     ADA254::ADA254(spi::SPI_Config cfg) : spi::SPI_Interface(cfg) {

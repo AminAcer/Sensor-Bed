@@ -6,6 +6,8 @@ idf_component_register(SRCS
                          constants
                          arduino-esp32
                          esp8266-oled-ssd1306
+                         protocols
+                         scheduler
                          logger
                          sockets
                          dis
