@@ -88,9 +88,9 @@ namespace sensors {
         }
 
         // Combine each Least/Most-Significant-Byte into one value
-        int16_t heading = ((int16_t)buffer[1] << 8) | buffer[0];
-        int16_t roll = ((int16_t)buffer[3] << 8) | buffer[2];
-        int16_t pitch = ((int16_t)buffer[5] << 8) | buffer[4];
+        int16_t heading = static_cast<int16_t>(buffer[1]) << 8 | buffer[0];
+        int16_t roll = static_cast<int16_t>(buffer[3]) << 8 | buffer[2];
+        int16_t pitch = static_cast<int16_t>(buffer[5]) << 8 | buffer[4];
 
         std::lock_guard lock(dataMutex);
         euler.heading = heading / 16.0f;
@@ -108,9 +108,9 @@ namespace sensors {
         }
 
         // Combine each Least/Most-Significant-Byte into one value
-        int16_t x = ((int16_t)buffer[1] << 8) | buffer[0];
-        int16_t y = ((int16_t)buffer[3] << 8) | buffer[2];
-        int16_t z = ((int16_t)buffer[5] << 8) | buffer[4];
+        int16_t x = static_cast<int16_t>(buffer[1]) << 8 | buffer[0];
+        int16_t y = static_cast<int16_t>(buffer[3]) << 8 | buffer[2];
+        int16_t z = static_cast<int16_t>(buffer[5]) << 8 | buffer[4];
 
         std::lock_guard lock(dataMutex);
         mag.x = x;
@@ -127,9 +127,9 @@ namespace sensors {
         }
 
         // Combine each Least/Most-Significant-Byte into one value
-        int16_t x = ((int16_t)buffer[1] << 8) | buffer[0];
-        int16_t y = ((int16_t)buffer[3] << 8) | buffer[2];
-        int16_t z = ((int16_t)buffer[5] << 8) | buffer[4];
+        int16_t x = static_cast<int16_t>(buffer[1]) << 8 | buffer[0];
+        int16_t y = static_cast<int16_t>(buffer[3]) << 8 | buffer[2];
+        int16_t z = static_cast<int16_t>(buffer[5]) << 8 | buffer[4];
 
         std::lock_guard lock(dataMutex);
         acc.x = x;
@@ -146,9 +146,9 @@ namespace sensors {
         }
 
         // Combine each Least/Most-Significant-Byte into one value
-        int16_t x = ((int16_t)buffer[1] << 8) | buffer[0];
-        int16_t y = ((int16_t)buffer[3] << 8) | buffer[2];
-        int16_t z = ((int16_t)buffer[5] << 8) | buffer[4];
+        int16_t x = static_cast<int16_t>(buffer[1]) << 8 | buffer[0];
+        int16_t y = static_cast<int16_t>(buffer[3]) << 8 | buffer[2];
+        int16_t z = static_cast<int16_t>(buffer[5]) << 8 | buffer[4];
 
         std::lock_guard lock(dataMutex);
         gyro.x = x;
@@ -165,7 +165,7 @@ namespace sensors {
         }
 
         std::lock_guard lock(dataMutex);
-        temperature = (int8_t)buffer[0];
+        temperature = buffer[0];
 
         ESP_LOGV(name.c_str(), "Chip Temperature: %d", temperature);
     }

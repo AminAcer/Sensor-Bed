@@ -1,3 +1,5 @@
+#include "sockets/sockets.h"
+
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -7,7 +9,6 @@
 
 #include "constants/general.h"
 #include "logger/logger.h"
-#include "sockets/sockets.h"
 
 namespace sockets::udp {
     static const char* TAG = "SOCKETS";

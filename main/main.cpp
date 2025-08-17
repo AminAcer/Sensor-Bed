@@ -40,19 +40,22 @@ void initBench() {
     ESP_ERROR_CHECK(uart::init_all_uart_ports());
 
     // Init all sensors
-    static auto sdcard = sensors::ADA254(
-        spi::SPI_Config{.name = "ADA254", .cs = GPIO_NUM_40, .speed_hz = (uint16_t)10000000});
+    static auto sdcard = sensors::ADA254(spi::SPI_Config{
+        .name = "ADA254", .cs = GPIO_NUM_40, .speed_hz = static_cast<uint16_t>(10000000)});
 
     static auto accel = sensors::BNO055(
-        i2c::I2C_Config{.name = "BNO055", .dev_addr = 0x28, .scl_speed_hz = (uint16_t)100000},
+        i2c::I2C_Config{
+            .name = "BNO055", .dev_addr = 0x28, .scl_speed_hz = static_cast<uint16_t>(100000)},
         bus_handle);
 
     static auto bar1 = sensors::BME280(
-        i2c::I2C_Config{.name = "BME280", .dev_addr = 0x76, .scl_speed_hz = (uint16_t)100000},
+        i2c::I2C_Config{
+            .name = "BME280", .dev_addr = 0x76, .scl_speed_hz = static_cast<uint16_t>(100000)},
         bus_handle);
 
     static auto bar2 = sensors::BME280(
-        i2c::I2C_Config{.name = "BME280-2", .dev_addr = 0x77, .scl_speed_hz = (uint16_t)100000},
+        i2c::I2C_Config{
+            .name = "BME280-2", .dev_addr = 0x77, .scl_speed_hz = static_cast<uint16_t>(100000)},
         bus_handle);
 
     // Main Loop: Write latest data to the SD Card at 20hz
