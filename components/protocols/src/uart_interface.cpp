@@ -1,9 +1,9 @@
-#include "protocols/uart_interface.h"
 
 #include "driver/uart.h"
 #include "esp_err.h"
 #include "hal/uart_types.h"
 #include "logger/logger.h"
+#include "protocols/uart_interface.h"
 
 #define UART_BAUD_RATE 9600
 #define UART_RX_BUFFER_SIZE 2048

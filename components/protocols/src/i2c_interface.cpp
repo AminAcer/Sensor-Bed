@@ -46,7 +46,7 @@ namespace i2c {
 
         i2c_master_bus_handle_t bus_handle;
         if (i2c_new_master_bus(&i2c_master_config, &bus_handle) != ESP_OK) {
-            D_LOGW(TAG, "I2C failed to initialize");
+            D_LOGI(TAG, "I2C failed to initialize");
         }
 
         return bus_handle;

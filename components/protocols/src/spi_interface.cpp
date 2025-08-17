@@ -14,7 +14,7 @@ namespace spi {
         };
 
         if (spi_bus_add_device(SPI3_HOST, &dev_cfg, &dev_handle)) {
-            D_LOGW(TAG, "SPI failed to add device: %s", cfg.name.c_str());
+            D_LOGI(TAG, "SPI failed to add device: %s", cfg.name.c_str());
         }
     }
 
@@ -30,7 +30,7 @@ namespace spi {
         };
 
         if (spi_bus_initialize(SPI3_HOST, &bus_config, SPI_DMA_CH_AUTO)) {
-            D_LOGW(TAG, "SPI failed to initialize");
+            D_LOGI(TAG, "SPI failed to initialize");
             return ESP_FAIL;
         }
 
